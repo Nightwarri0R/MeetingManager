@@ -1,0 +1,317 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+/**
+ * 
+ */
+
+/**
+ * @author Aylin Ibryamov
+ *
+ */
+public class EmployeeDiary {
+	Employee rootOfEmployees;
+	Employee newEmployee;
+	
+	/**
+	 * Method that adds to the binary depending on the ID numbers, decides whether to put it on right or left.
+	 * 
+	 * @param newEmployee
+	 */
+	
+	public void addEmployee(Employee newEmployee) {
+		// Check if the root is empty.
+		if (rootOfEmployees == null) {
+		// If is empty assigns the new student to it.
+			rootOfEmployees = newEmployee;
+		} else {
+
+			Employee searchEmployee = rootOfEmployees;
+
+			Employee parentEmployeeNode;
+
+			while (true) {
+
+				parentEmployeeNode = searchEmployee;
+				//Checks the student ID based on the numbers decides to assign to left or right.
+				if (newEmployee.getId() < searchEmployee.getId()) {
+					//assigns it to left here
+					searchEmployee = searchEmployee.toLeft;
+				// Here check the info is checked if it is valid.
+					if (searchEmployee == null) {
+						parentEmployeeNode.toLeft = newEmployee;
+						return;
+
+					}
+				} else {
+				// Last option is to be assigned on the right
+					searchEmployee =searchEmployee.toRight;
+					if (searchEmployee == null) {
+						parentEmployeeNode.toRight = newEmployee;
+						return;
+
+					}
+				}
+			}
+		}
+	}
+
+	
+	
+	
+	
+/** 
+ * Method allowing the manager the search trough the tree for a certain employee.
+ * 	
+ * @param Id
+ * @return
+ */
+	public Employee findAnEmployee(int Id) {
+		
+		Employee searchNode;
+
+		searchNode =rootOfEmployees;
+		// Loops until the employee  is not equal to entered employee Id.
+		while (searchNode.getId() != Id) {
+			// Checks if the entered employee is less than the employee in the program
+			if (Id < searchNode.getId()) {
+				// Check the  left side
+				searchNode = searchNode.toLeft;
+				
+			} else {
+				// Check the right side
+				searchNode = searchNode.toRight;
+				return searchNode;
+			}
+			
+			// Check if it is empty
+			if (searchNode == null) {
+				
+				//If it is empty displays this message.
+				System.out.println("Requested employee does ot exist");
+				return null;
+			}
+		}
+
+		return searchNode;
+
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 */
+	
+	public void usrInput() {
+
+		int id = 0;
+		String name="John";
+		
+		Scanner scan = new Scanner(System.in);
+		System.out.print(" Enter the Employee's ID :");
+		// This allows me to make a more reliable program.
+		try {
+			// User enters Employee's Id
+			id = scan.nextInt();
+
+			System.out.print(" Enter the Employee name :");
+			// User enters the  Employee's name
+			name = scan.next();
+		// If any error occurs this catch block will catch it 
+		} catch (NumberFormatException e) {
+			//Display this message 
+			System.out.println("Please enter only numbers first error has ocurred: " + e);
+			// Then rerun the same method again.
+			usrInput();
+
+		} catch(Exception e) {
+			//Display this message 
+			System.out.println("Please enter only Letters : " + e);
+			// Then rerun the same method again.
+			usrInput();
+
+		}
+		// This if statement restricts the user to enter a value higher than 10000 and lower than 0.
+		if (id > 0 && id < 10000) {
+			// New employee  info is passed to a node 
+			Employee newEmployee = new Employee(id, name);
+			// The actual add employee method is triggered 
+			addEmployee(newEmployee);
+		} else {
+			//This is displayed when the user enters integer out of boundaries for the ID
+			System.out.println("Employee's ID must be between 0 nd 10000");
+			//  Rerun the same method
+			usrInput();
+		}
+
+	}
+
+	/**
+	 * Method that allows user to define how many students they would like to input
+	 * to the database
+	 */
+	public void nmbrOfEmplooyesToBeadded() {
+		int temp;
+		int i = 0;
+
+		System.out.println("Enter the number of employee's to be added ?:");
+		Scanner scan = new Scanner(System.in);
+		// Takes the number of employee's to be added
+		temp = scan.nextInt();
+		// Loops exactly the same amount each time adding the employee to the database
+		do {
+			usrInput();
+			i++;
+		// Once the conditions of the loop are met.
+		} while (i + 1 <= temp);
+		// Notifies the user that the employee's were added
+		System.out.println("New employee's were added:");
+	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * 
+	 * @param Id
+	 * @return
+	 */
+	
+	
+	public boolean removeItem(int Id) throws InputMismatchException  {
+		Employee removeNode =rootOfEmployees;
+		Employee parent =rootOfEmployees;
+
+		boolean isALeftChild = true;
+		// Again loops until the there are not matching student Ids are left
+		while (removeNode.getId() != Id) {
+
+			parent = removeNode;
+			// Check if the student Id is less than the saved ones
+			if (Id < removeNode.getId()) {
+				//if it is true goes to lefts side
+				isALeftChild = true;
+				// Removes the node from the left
+				removeNode = removeNode.toLeft;
+
+			} else {
+				// if it is true goes to the right side
+				isALeftChild = false;
+				// Removes the node from the right
+				removeNode = removeNode.toRight;
+			}
+			// If it empty returns false
+			if (removeNode == null)
+
+				return false;
+
+		}
+		// check the both sides at the same time if they have any child
+		if (removeNode.toLeft == null && removeNode.toRight == null) {
+		// If the remove node is equal to root
+			if (removeNode == rootOfEmployees) {
+		// Resets the root to null
+				rootOfEmployees = null;
+
+			} else if (isALeftChild) {
+		// Otherwise resets left side to null
+				parent.toLeft = null;
+
+			} else {
+		// Last condition is to set the right side to null
+				parent.toRight = null;
+			}
+			// This time checks the right side first if it has any child
+		} else if (removeNode.toRight == null) {
+			// if it this condition is met it check the root.
+			if (removeNode == rootOfEmployees) {
+			// to be removed employee is in root checks to left
+				rootOfEmployees = removeNode.toLeft;
+
+			} else if (isALeftChild) {
+			// If the boolean is true it removes the node from the left side
+				parent.toLeft = removeNode.toLeft;
+			// If it is false then removes from the right side
+			} else {
+				parent.toRight = removeNode.toLeft;
+			}
+			// Now it has to checks the left side first if it has any child as we did with the left side
+		} else if (removeNode.toLeft == null) {
+
+			if (removeNode == rootOfEmployees) {
+
+				rootOfEmployees = removeNode.toRight;
+
+			} else if (isALeftChild) {
+
+				parent.toLeft = removeNode.toRight;
+
+			} else {
+				parent.toRight = removeNode.toLeft;
+			}
+
+		} else {
+			// In this case we are getting the node from external method. Which will be in the place of the removed node
+			Employee restoration = getRestorationEmployee(removeNode);
+			// First we check removed node if it equal to the root
+			if (removeNode == rootOfEmployees) {
+			// Then we assign the replacement node to the root
+				rootOfEmployees= restoration;
+
+			} else if (isALeftChild) {
+				// If it is less it is going to be located on the left
+				parent.toLeft = restoration;
+
+			} else {
+				// if it more than the root will be placed on the right
+				parent.toRight = restoration;
+
+				restoration.toLeft = removeNode.toLeft;
+
+			}
+
+		}
+		// Returns true because it is boolean method
+		return true;
+
+	}
+	/**
+	 * Method that makes sure to allocate correctly the new replacement node and at the returns it back to the remove method
+	 * @param restoredNode
+	 * @return
+	 */
+
+	public Employee getRestorationEmployee(Employee restoredNode) throws InputMismatchException {
+		// Local Node  that is assigned to passed in Node
+		Employee restorationParent = restoredNode;
+		// Local Node  that is assigned to passed in Node
+		Employee restoration = restoredNode;
+		//New Node which removes from the right side of the tree.
+	Employee remove = restoredNode.toRight;
+		// Loops until remove is not equal to zero
+		while (remove != null) {
+			
+			restorationParent = restoration;
+
+			restoredNode = remove;
+
+			remove = remove.toLeft;
+		}
+		// Check if the entered node is not equal to the left side.
+		if (restoration != restoredNode.toRight) {
+			
+			restorationParent.toLeft = restoration.toRight;
+			restoration.toRight = restoredNode.toRight;
+		}
+
+		return restoration;
+	}
+
+	
+	
+	
+	
+	
+}
